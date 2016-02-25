@@ -33,7 +33,7 @@ def tcpdump_rate(sw)
     # with open ("/tmp/interface.cap", "r") as pcap:
     # capture =  pcap.read()
 
-    packets = data.splitlines()
+    packets = capture.splitlines()
     total_packets = len(packets)
     last_packet = packets[len(packets)-1]
     fields = last_packet.split()
