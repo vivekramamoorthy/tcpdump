@@ -24,46 +24,45 @@ from __future__ import print_function, division
 
 from re import match
 
+import datetime
+import re
+import time
+
 # Add your library functions here.
 
-def tcpdump_rate(sw)
-
+def tcpdump_rate(sw):
     capture = sw('cat /tmp/interface.cap'.format(**locals()),
-                 shell='bash_swns')
-    # with open ("/tmp/interface.cap", "r") as pcap:
-    # capture =  pcap.read()
-
+                 'bash')
     packets = capture.splitlines()
     total_packets = len(packets)
     last_packet = packets[len(packets)-1]
     fields = last_packet.split()
+    print(fields)
     timestamp = datetime.datetime.strptime(fields[0], '%H:%M:%S.%f').time()
-    msec = (timestamp.hour *60*60 + timestamp.minute * 60 + timestamp.second) * 1000 + (timestamp.microsecond/1000)
+    print(timestamp)
+    msec = (timestamp.hour * 60 * 60 + timestamp.minute * 60 +
+            timestamp.second) * 1000 + (timestamp.microsecond / 1000)
     rate = total_packets * 1000 / msec
     return rate
- 
+
 def tcpdump_capture_interface(sw, options, interface_id, wait_time):
-    cmd_output = sw('tcpdump -D'.format(**locals()),
-                    shell='bash_swns')
-    interface_re = (r'(?P<linux_interface>\d)\.' + interface_id +
+    cmd_output = sw('ip netns exec swns tcpdump -D'.format(**locals()),
+                    'bash')
+    interface_re = (r'(?P<linux_interface>\d)\.' + str(interface_id) +
                     r'\s[\[Up, Running\]]')
     re_result = re.search(interface_re, cmd_output)
     assert re_result
     result = re_result.groupdict()
 
-    sw('tcpdump -ni ' + result['linux_interface'] +
+    sw('ip netns exec swns tcpdump -ni ' + result['linux_interface'] +
         options + '-ttttt'
-        '> /tmp/interface.cap 2>&1 &'.format(**locals()),
-        shell='bash_swns')
+        '> /tmp/interface.cap &'.format(**locals()),
+        'bash')
     time.sleep(wait_time)
     sw('killall tcpdump'.format(**locals()),
-        shell='bash_swns')
-    capture = sw('cat /tmp/interface.cap'.format(**locals()),
-                 shell='bash_swns')
-    sw('rm /tmp/interface.cap'.format(**locals()),
-       shell='bash_swns')
-    return capture
+        'bash')
 
 __all__ = [
-    'tcpdump_capture_interface'
+    'tcpdump_capture_interface',
+    'tcpdump_rate'
 ]
