@@ -30,8 +30,8 @@ def tcpdump_rate(sw)
 
     capture = sw('cat /tmp/interface.cap'.format(**locals()),
                  shell='bash_swns')
-    with open ("/tmp/interface.cap", "r") as pcap:
-    capture =  pcap.read()
+    # with open ("/tmp/interface.cap", "r") as pcap:
+    # capture =  pcap.read()
 
     packets = data.splitlines()
     total_packets = len(packets)
