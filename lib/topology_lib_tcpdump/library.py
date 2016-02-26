@@ -33,7 +33,7 @@ import time
 def tcpdump_rate(sw):
     total_packets = sw('cat /tmp/interface.cap | wc -l', 'bash')
     total_packets = int(total_packets.strip()) - 1
-    last_packet = sw('tail -2 /tmp/interface.cap | head - 1')
+    last_packet = sw('tail -2 /tmp/interface.cap | head - 1', 'bash')
     fields = last_packet.split()
     print(fields)
     timestamp = datetime.datetime.strptime(fields[0], '%H:%M:%S.%f').time()
