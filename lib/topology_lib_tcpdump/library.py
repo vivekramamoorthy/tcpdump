@@ -31,7 +31,8 @@ import time
 # Add your library functions here.
 
 def tcpdump_rate(sw):
-    total_packets = int(sw('cat /tmp/interface.cap | wc -l')) - 1
+    total_packets = sw('cat /tmp/interface.cap | wc -l')
+    total_packets = int(total_packets.strip()) - 1
     last_packet = sw('tail -2 /tmp/interface.cap | head - 1')
     fields = last_packet.split()
     print(fields)
