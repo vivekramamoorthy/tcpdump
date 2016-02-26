@@ -31,11 +31,8 @@ import time
 # Add your library functions here.
 
 def tcpdump_rate(sw):
-    capture = sw('cat /tmp/interface.cap'.format(**locals()),
-                 'bash')
-    packets = capture.splitlines()
-    total_packets = len(packets)
-    last_packet = packets[len(packets)-1]
+    total_packets = sw('cat /tmp/interface.cap | wc -l') - 1
+    last_packet = sw('tail -2 /tmp/interface.cap | head - 1')
     fields = last_packet.split()
     print(fields)
     timestamp = datetime.datetime.strptime(fields[0], '%H:%M:%S.%f').time()
@@ -55,7 +52,7 @@ def tcpdump_capture_interface(sw, options, interface_id, wait_time):
     result = re_result.groupdict()
 
     sw('ip netns exec swns tcpdump -ni ' + result['linux_interface'] +
-        options + '-ttttt'
+        options + ' -ttttt '
         '> /tmp/interface.cap &'.format(**locals()),
         'bash')
     time.sleep(wait_time)
