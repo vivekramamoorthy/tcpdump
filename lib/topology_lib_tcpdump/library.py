@@ -56,7 +56,7 @@ def tcpdump_capture_interface(sw, options, interface_id, wait_time):
         '> /tmp/interface.cap &'.format(**locals()),
         'bash')
     time.sleep(wait_time)
-    sw('killall tcpdump'.format(**locals()),
+    sw('killall tcpdump &'.format(**locals()),
         'bash')
 
 __all__ = [
