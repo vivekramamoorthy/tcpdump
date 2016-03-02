@@ -59,14 +59,20 @@ def tcpdump_capture_interface(sw, options, interface_id, wait_time, check_cpu):
     time.sleep(wait_time)
     cpu_util = 0
     if check_cpu:
-        cpu_util = sw('top -bn3 | grep "Cpu(s)" | \
-           sed "s/.*, *\([0-9.]*\)%* id.*/\1/" | \
-           awk \'{print 100 - $1}\''format(**locals()),
-           'bash')
-        cpu_samples = cpu_util.split()
-        for cpu_sample in cpu_samples:
-           cpu_util = cpu_util + cpu_sample
-        cpu_util = cpu_util/3
+        top_output = ops1('top -bn3 | grep "Cpu(s)" |'
+                          ' sed "s/.*, *\\([0-9.]*\)%* id.*/\\1/"'
+                          .format(**locals()),
+                          'bash')
+        cpu_samples = top_output.split('\n')
+        del cpu_samples[0]
+        for cpu_idle in cpu_samples:
+            print(cpu_idle)
+            cpu_util = cpu_util + (100 - float(cpu_idle))
+        cpu_util = str(cpu_util/3)
+
+    print("Average CPU utilization: ")
+    print(cpu_util)
+    
     sw('killall tcpdump &'.format(**locals()),
         'bash')
     return cpu_util
