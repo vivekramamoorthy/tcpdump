@@ -66,12 +66,10 @@ def tcpdump_capture_interface(sw, options, interface_id, wait_time, check_cpu):
         cpu_samples = top_output.split('\n')
         del cpu_samples[0]
         for cpu_idle in cpu_samples:
-            print(cpu_idle)
             cpu_util = cpu_util + (100 - float(cpu_idle))
         cpu_util = str(cpu_util/3)
-
-    print("Average CPU utilization: ")
-    print(cpu_util)
+        print("Average CPU utilization: ")
+        print(cpu_util)
     
     sw('killall tcpdump &'.format(**locals()),
         'bash')
