@@ -73,7 +73,8 @@ def tcpdump_capture_interface(sw, options, interface_id, wait_time, check_cpu):
     
     sw('killall tcpdump &'.format(**locals()),
         'bash')
-    return cpu_util
+    dict = {'cpu_util': cpu_util};    
+    return dict
 
 __all__ = [
     'tcpdump_capture_interface',
