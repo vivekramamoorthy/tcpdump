@@ -43,7 +43,7 @@ def tcpdump_rate(sw):
     rate = total_packets * 1000 / msec
     return rate
 
-def tcpdump_capture_interface(sw, options, interface_id, wait_time):
+def tcpdump_capture_interface(sw, options, interface_id, wait_time, check_cpu):
     cmd_output = sw('ip netns exec swns tcpdump -D'.format(**locals()),
                     'bash')
     interface_re = (r'(?P<linux_interface>\d)\.' + str(interface_id) +
@@ -57,8 +57,18 @@ def tcpdump_capture_interface(sw, options, interface_id, wait_time):
         '> /tmp/interface.cap &'.format(**locals()),
         'bash')
     time.sleep(wait_time)
+    cpu_util = 0
+    if check_cpu
+        cpu_util = sw('top -bn3 | grep "Cpu(s)" | \
+           sed "s/.*, *\([0-9.]*\)%* id.*/\1/" | \
+           awk '{print 100 - $1}'')
+        cpu_samples = cpu_util.split()
+        for cpu_sample in cpu_samples:
+           cpu_util = cpu_util + cplu_sample
+        cpu_util = cpu_util/3
     sw('killall tcpdump &'.format(**locals()),
         'bash')
+    return cpu_util
 
 __all__ = [
     'tcpdump_capture_interface',
