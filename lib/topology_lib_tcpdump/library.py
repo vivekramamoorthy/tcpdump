@@ -32,11 +32,12 @@ import time
 
 def tcpdump_rate(sw):
     rate = 0
-    packets_captured_info = sw('tail -3 /tmp/interface.cap | head -1', 'bash')
-    total_packets = packets_captured_info.split()[0]
-    for i in range(3, int(total_packets)):
+    total_packets = 0
+    for i in range(1, int(total_packets)):
         sw_cat = 'tail -' + str(i) + ' /tmp/interface.cap | head -1'
         packet_info = sw(sw_cat, 'bash')
+        if "packets captured" in packet_info:
+            total_packets = packet_info.split()[0]
         time = re.match(r"^\d\d?:\d\d?:\d\d?\.\d+", packet_info)
         if time:
             fields = packet_info.split()
