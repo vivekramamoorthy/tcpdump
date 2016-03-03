@@ -23,10 +23,8 @@ from __future__ import unicode_literals, absolute_import
 from __future__ import print_function, division
 
 from re import match
-
-import datetime
-import re
-import time
+from re import search
+from datetime import datetime
 
 # Add your library functions here.
 
@@ -39,11 +37,11 @@ def tcpdump_rate(sw):
         packet_info = sw(sw_cat, 'bash')
         if "packets captured" in packet_info:
             total_packets = packet_info.split()[0]
-        time = re.match(r"^\d\d?:\d\d?:\d\d?\.\d+", packet_info)
+        time = match(r"^\d\d?:\d\d?:\d\d?\.\d+", packet_info)
         if time:
             fields = packet_info.split()
-            timestamp = datetime.datetime.strptime(fields[0],
-                                                   '%H:%M:%S.%f').time()
+            timestamp = datetime.strptime(fields[0],
+                                          '%H:%M:%S.%f').time()
             break
     msec = (timestamp.hour * 60 * 60 + timestamp.minute * 60 +
             timestamp.second) * 1000 + (timestamp.microsecond / 1000)
