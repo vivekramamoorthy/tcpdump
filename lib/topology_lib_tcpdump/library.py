@@ -32,6 +32,7 @@ import time
 
 def tcpdump_rate(sw):
     rate = 0
+    total_packets = 0
     total_lines = sw("cat /tmp/interface.cap | wc -l")
     for i in range(1, int(total_lines)):
         sw_cat = 'tail -' + str(i) + ' /tmp/interface.cap | head -1'
