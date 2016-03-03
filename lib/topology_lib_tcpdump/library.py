@@ -25,6 +25,7 @@ from __future__ import print_function, division
 from re import match
 from re import search
 from datetime import datetime
+from time import sleep
 
 # Add your library functions here.
 
@@ -54,7 +55,7 @@ def tcpdump_capture_interface(sw, options, interface_id, wait_time, check_cpu):
                     'bash')
     interface_re = (r'(?P<linux_interface>\d)\.' + str(interface_id) +
                     r'\s[\[Up, Running\]]')
-    re_result = re.search(interface_re, cmd_output)
+    re_result = search(interface_re, cmd_output)
     assert re_result
     result = re_result.groupdict()
 
@@ -62,13 +63,13 @@ def tcpdump_capture_interface(sw, options, interface_id, wait_time, check_cpu):
         options + ' -ttttt '
         '> /tmp/interface.cap 2>&1 &'.format(**locals()),
         'bash')
-    time.sleep(wait_time)
+    sleep(wait_time)
     cpu_util = 0
     if check_cpu:
         top_output = sw('top -bn4 | grep "Cpu(s)" |'
-                          ' sed "s/.*: *\\([0-9.]*\)%* us.*/\\1/"'
-                          .format(**locals()),
-                          'bash')
+                        ' sed "s/.*: *\\([0-9.]*\)%* us.*/\\1/"'
+                        .format(**locals()),
+                        'bash')
         cpu_samples = top_output.split('\n')
         if "top" in cpu_samples[0]:
             del cpu_samples[0]
@@ -81,7 +82,7 @@ def tcpdump_capture_interface(sw, options, interface_id, wait_time, check_cpu):
     
     sw('killall tcpdump &'.format(**locals()),
         'bash')
-    dict = {'cpu_util': cpu_util};    
+    dict = {'cpu_util': cpu_util}
     return dict
 
 __all__ = [
