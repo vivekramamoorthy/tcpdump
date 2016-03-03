@@ -68,12 +68,13 @@ def tcpdump_capture_interface(sw, options, interface_id, wait_time, check_cpu):
     cpu_util = 0
     if check_cpu:
         top_output = sw('top -bn3 | grep "Cpu(s)" |'
-                          ' sed "s/.*, *\\([0-9.]*\)%* us.*/\\1/"'
+                          ' sed "s/.*: *\\([0-9.]*\)%* us.*/\\1/"'
                           .format(**locals()),
                           'bash')
         cpu_samples = top_output.split('\n')
         if "top" in cpu_samples[0]:
             del cpu_samples[0]
+        del cpu_samples[0]    
         for cpu_us in cpu_samples:
             cpu_util = cpu_util + float(cpu_us)
         cpu_util = str(cpu_util/3)
