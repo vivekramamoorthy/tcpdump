@@ -54,7 +54,7 @@ def tcpdump_capture_interface(sw, options, interface_id, wait_time, check_cpu):
 
     sw('ip netns exec swns tcpdump -ni ' + result['linux_interface'] +
         options + ' -ttttt '
-        '> /tmp/interface.cap &'.format(**locals()),
+        '> /tmp/interface.cap 2>&1 &'.format(**locals()),
         'bash')
     time.sleep(wait_time)
     cpu_util = 0
